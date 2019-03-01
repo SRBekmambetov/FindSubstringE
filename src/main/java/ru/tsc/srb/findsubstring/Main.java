@@ -77,7 +77,7 @@ public class Main {
         }
 
         if (main.getNumberOfThreads() < 1) {
-            System.out.println("Введено неположительное число потоков");
+            System.out.println("Введено отрицательное число потоков");
             return;
         }
 
