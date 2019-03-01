@@ -35,13 +35,14 @@ public class DocumentSearchTask extends RecursiveTask<String> {
             }
             if (line.contains(searchedSubstring)) {
                 long z = Thread.currentThread().getId();
-                if (z >= Main.getNumberOfThreads()) {
-                    z = z % Main.getNumberOfThreads();
+                Main main = Main.getMain();
+                if (z >= main.getNumberOfThreads()) {
+                    z = z % main.getNumberOfThreads();
                 }
                 try {
                     synchronized (Main.class) {
-                        Main.getBufferedWriter().append(z + " " + file.getAbsolutePath() + " : " + line + "\n");
-                        Main.getBufferedWriter().flush();
+                        main.getBufferedWriter().append(z + " " + file.getAbsolutePath() + " : " + line + "\n");
+                        main.getBufferedWriter().flush();
                     }
                 } catch (IOException e) {
                     System.out.println("Файл не доступен для записи");

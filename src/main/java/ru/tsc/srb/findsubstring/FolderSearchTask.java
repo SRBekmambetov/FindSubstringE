@@ -21,7 +21,8 @@ public class FolderSearchTask extends RecursiveTask<String> {
         if (path.canRead()) {
             for (File entry : path.listFiles()) {
                 if (entry.isFile()) {
-                    if (Main.getFileExtensions().contains(entry.getName().substring(entry.getName().lastIndexOf(".") + 1))) {
+                    Main main = Main.getMain();
+                    if (main.getFileExtensions().contains(entry.getName().substring(entry.getName().lastIndexOf(".") + 1))) {
                         DocumentSearchTask task = new DocumentSearchTask(entry, searchedSubstring);
                         forks.add(task);
                         task.fork();

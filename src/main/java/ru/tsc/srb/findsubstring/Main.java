@@ -12,25 +12,45 @@ public class Main {
 
     static Main main = new Main();
 
-    private static ForkJoinPool forkJoinPool;
-    private static List<String> fileExtensions;
-    private static BufferedWriter bufferedWriter;
-    private static int numberOfThreads;
+    private ForkJoinPool forkJoinPool;
+    private List<String> fileExtensions;
+    private BufferedWriter bufferedWriter;
+    private int numberOfThreads;
 
     public Main() {
         this.fileExtensions = new ArrayList<>();
     }
 
-    public static List<String> getFileExtensions() {
+    public List<String> getFileExtensions() {
         return fileExtensions;
     }
 
-    public static BufferedWriter getBufferedWriter() {
+    public BufferedWriter getBufferedWriter() {
         return bufferedWriter;
     }
 
-    public static int getNumberOfThreads() {
+    public int getNumberOfThreads() {
         return numberOfThreads;
+    }
+
+    public ForkJoinPool getForkJoinPool() {
+        return forkJoinPool;
+    }
+
+    public void setForkJoinPool(ForkJoinPool forkJoinPool) {
+        this.forkJoinPool = forkJoinPool;
+    }
+
+    public void setFileExtensions(List<String> fileExtensions) {
+        this.fileExtensions = fileExtensions;
+    }
+
+    public void setBufferedWriter(BufferedWriter bufferedWriter) {
+        this.bufferedWriter = bufferedWriter;
+    }
+
+    public void setNumberOfThreads(int numberOfThreads) {
+        this.numberOfThreads = numberOfThreads;
     }
 
     public static Main getMain() {
@@ -39,6 +59,8 @@ public class Main {
 
     public static void main(String[] args) {
 
+        Main main = Main.getMain();
+
         long startTime = System.currentTimeMillis();
 
         if (args.length < 5) {
@@ -46,14 +68,15 @@ public class Main {
             return;
         }
 
+
         try {
-            numberOfThreads = Integer.parseInt(args[0]);
+            main.setNumberOfThreads(Integer.parseInt(args[0]));
         } catch (NumberFormatException e) {
             System.out.println("Количество потоков введено не верно");
             return;
         }
 
-        if (numberOfThreads < 1) {
+        if (main.getNumberOfThreads() < 1) {
             System.out.println("Введено неположительное число потоков");
             return;
         }
@@ -63,13 +86,13 @@ public class Main {
         String outputFile = args[3];
 
         for (int i = 4; i < args.length; i++) {
-            fileExtensions.add(args[i]);
+            main.getFileExtensions().add(args[i]);
         }
 
-        forkJoinPool = new ForkJoinPool(numberOfThreads);
+        main.setForkJoinPool(new ForkJoinPool(main.getNumberOfThreads()));
 
         try {
-            bufferedWriter = new BufferedWriter(new FileWriter(new File(outputFile)));
+            main.setBufferedWriter(new BufferedWriter(new FileWriter(new File(outputFile))));
         } catch (IOException e) {
             System.out.println("Не доступна папка для записи");
             return;
@@ -82,9 +105,9 @@ public class Main {
         long stopTime = System.currentTimeMillis();
 
         try {
-            bufferedWriter.append(Long.toString(stopTime - startTime));
-            bufferedWriter.flush();
-            bufferedWriter.close();
+            main.getBufferedWriter().append(Long.toString(stopTime - startTime));
+            main.getBufferedWriter().flush();
+            main.getBufferedWriter().close();
         } catch (IOException e) {
             System.out.println("Файл не доступен для записи");
             return;
@@ -94,6 +117,7 @@ public class Main {
     }
 
     public static String foundSubstring(File path, String searchedSubstring) {
-        return forkJoinPool.invoke(new FolderSearchTask(path, searchedSubstring));
+        Main main = getMain();
+        return main.getForkJoinPool().invoke(new FolderSearchTask(path, searchedSubstring));
     }
 }
